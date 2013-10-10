@@ -1,0 +1,55 @@
+<?php
+
+class Task extends Table implements ISingleton
+{
+	/**
+	 * Table name in database
+	 * @var string
+	 */
+	protected  $_name = 'task';
+	protected  $_rowClass = 'TaskRow';
+
+	protected $_dependentTables = array('Shell', 'Action', 'ResponseCode');
+
+	/**
+	 * @var Transmit
+	 */
+	private static $_instance;
+
+	/**
+	 * Disallow cloning
+	 */
+	private function __clone() {
+		throw new Exception('Clone is not allowed.');
+	}
+
+	public function __construct() {
+		parent::__construct();
+	}
+	/**
+	 * @return Transmit
+	 */
+	public static function getInstance()
+	{
+		if (!self::$_instance) {
+			self::$_instance = new self();
+		}
+		return self::$_instance;
+	}
+
+	/**
+	 * Return last unprocessed row from the table
+	 *
+	 * @return TaskRow|null
+	 */
+	public function getNext()
+	{
+		$select = $this->select();
+		$select->where('in_process = 0');
+		$select->where('response_code_id is null');
+		$select->order('id asc');
+		$select->limit(1);
+
+		return $this->fetchRow($select);
+	}
+}

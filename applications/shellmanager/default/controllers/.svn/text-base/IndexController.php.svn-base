@@ -1,0 +1,13 @@
+<?php
+
+/**
+ * sdfsadf
+ *
+ */
+class IndexController extends ActionController
+{
+	public function indexAction()
+	{
+
+    }
+}

@@ -1,0 +1,22 @@
+<p>
+	<a href="<?php echo $this->url(array('action' => 'item', 'id' => '0')); ?>">Create row</a>
+	| <a href="<?php
+		echo $this->url(array('controller' => 'mysql', 'action' => 'index'), null, true);
+	?>">Back to table list</a>
+</p>
+
+<p class="error"></p>
+<table>
+	<?php echo $this->render('columns.phtml'); ?>
+	<?php foreach ($this->rows as $row) : ?>
+	<tr>
+		<?php foreach ($row as $element) : ?>
+		<td><?php echo $this->escape($element); ?></td>
+		<?php endforeach; ?>
+		<td>
+			<a href="<?php echo $this->url(array('action' => 'item', 'id' => $row['id'])); ?>">edit</a>
+			| <a class="delete" href="<?php echo $this->url(array('action' => 'delete', 'id' => $row['id'])); ?>">delete</a>
+		</td>
+	</tr>
+	<?php endforeach; ?>
+</table>

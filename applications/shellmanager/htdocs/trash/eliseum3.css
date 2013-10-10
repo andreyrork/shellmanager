@@ -1,0 +1,146 @@
+body,
+html {
+	margin:0;
+	padding:0;
+	background:#333333;
+	color:#000;
+	}
+body {
+-x-system-font:none;
+font-family:Arial;
+font-size: 80%;
+font-size-adjust:none;
+font-stretch:normal;
+font-style:normal;
+font-variant:normal;
+font-weight:normal;
+
+}
+#wrap {
+	background:#333333;
+	padding-left: 5%;
+	width:600px;
+	}
+#wrap h1 {
+	color:#fff;
+	text-align: center;
+}
+
+#header {
+	color:#fff;
+	height:50px;
+	}
+#header h1 {
+	padding-top:80px;
+    }
+
+#main {
+	background:#fff;
+	float:left;
+	width:600px;
+	color: #000;
+	padding-left: 5%; 
+	padding-right: 5%;
+	}
+#main h1, #main h2, #main h3, #main p {
+	padding:0 10px;
+	text-align: center;
+    }
+
+
+#menu {
+	margin: auto 0;
+	margin-top: 50px;
+	text-align: center;
+	width: 100%;
+	padding-left: 5%;
+}
+
+#menu .button {
+
+	background-image:url(/images/button.gif);
+	background-repeat:no-repeat;
+	display: inline;
+	width:110px;
+	height: 40px;
+	padding-left:5px;
+	padding-right:5px;
+	padding-top: 20px;
+	float: left;
+	text-align: center;
+	position:relative;
+	}
+	
+#menu .button:hover{
+	background-image:url(/images/Button-active.gif);	
+	
+}	
+#menu .button a {
+		color:white;
+		text-decoration:none;
+	}
+.button em {
+	display: none;
+	
+	position: absolute;
+	width: 200px;
+	height: 76px;
+	background: transparent url(/images/hover.png) no-repeat scroll 0 0;
+	
+
+
+}	
+#content {
+	background:#fff;
+	float:left;
+	width:600px;
+	color: #000;
+	padding-left: 5%; 
+	padding-right: 5%;
+	font: arial;
+	}
+#content h2 {
+	font-size: 24pt;
+	padding:0 15px;
+	text-align: center;
+	color: red;
+    }
+
+
+.accordion {
+border-bottom:1px solid #C4C4C4;
+width:480px;
+}
+.accordion h3 {
+-x-system-font:none;
+text-align: center;
+background:#E9E7E7 url(/images/arrow-square.gif) no-repeat scroll right -51px;
+border-color:#C4C4C4 #C4C4C4 -moz-use-text-color;
+border-style:solid solid none;
+border-width:1px 1px medium;
+cursor:pointer;
+font-family:Arial,Helvetica,sans-serif;
+font-size:120%;
+font-size-adjust:none;
+font-stretch:normal;
+font-style:normal;
+font-variant:normal;
+font-weight:bold;
+line-height:100%;
+margin:0;
+padding:7px 15px;
+}
+.accordion h3:hover {
+background-color:#E3E2E2;
+}
+.accordion h3.active {
+background-position:right 5px;
+}
+.accordion p {
+background:#F7F7F7 none repeat scroll 0 0;
+border-left:1px solid #C4C4C4;
+border-right:1px solid #C4C4C4;
+margin:0;
+padding:10px 15px 20px;
+}
+

@@ -1,0 +1,5 @@
+<tr>
+	<?php foreach ($this->columns as $column) : ?>
+	<th><?php echo $column; ?></th>
+	<?php endforeach; ?>
+</tr>

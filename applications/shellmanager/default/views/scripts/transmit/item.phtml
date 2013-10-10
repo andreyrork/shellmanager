@@ -1,0 +1,20 @@
+<?php
+$url = $this->url(array('id' => $this->transmit['id']));
+echo $this->form('update', array('action' => $url, 'method' => 'post'));
+?>
+
+<p><?php echo $this->formLabel('key', 'Short transmit description: '); ?></p>
+<p><?php echo $this->formText('key', $this->transmit['key'], array('maxlength' => 64)); ?></p>
+
+<p><?php echo $this->formLabel('text', 'Input transmit text: '); ?></p>
+<p><?php echo $this->formTextarea('text', $this->transmit['text']); ?></p>
+
+<p><?php echo $this->formLabel('randomize_type', 'Randomization type: '); ?></p>
+<p><?php echo $this->formRadio('randomize_type', $this->transmit['randomize_type'], array(), array('' => 'nulll', 'just0' => 'just0', 'just1' => 'just1', 'just2' => 'just2')); ?></p>
+
+<p><input type="submit" value="Save" /></p>
+
+<p><?php echo $this->formLabel('example_randomared', 'Example Randomized transmit text: '); ?></p>
+<p><?php echo $this->formTextarea('fake', $this->transmit['randomize'], array('class' => 'randomize')); ?></p>
+
+</form>

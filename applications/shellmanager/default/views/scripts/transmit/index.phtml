@@ -1,0 +1,18 @@
+<p><a href="<?php echo $this->url(array('action' => 'item', 'id' => '0')); ?>">Create transmit</a></p>
+<table>
+	<tr>
+		<th>Key</th>
+		<th>Transmit</th>
+		<th> --- </th>
+	</tr>
+<?php foreach ($this->transmit as $transmit) : ?>
+	<tr>
+		<td><?php echo $transmit['key']; ?></td>
+		<td><?php echo substr($this->escape($transmit['text']), 0, 50) . ' >>>'; ?></td>
+		<td>
+			<a href="<?php echo $this->url(array('action' => 'item', 'id' => $transmit['id'])); ?>">edit</a>
+			| <a class="delete" href="<?php echo $this->url(array('action' => 'delete', 'id' => $transmit['id'])); ?>">delete</a>
+		</td>
+	</tr>
+<?php endforeach; ?>
+</table>

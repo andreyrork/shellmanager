@@ -1,0 +1,60 @@
+<p>
+	<a href="<?php echo $this->url(array('action' => 'item', 'id' => 0)); ?>">Creating shell</a>
+	| <a href="<?php echo $this->url(array('action' => 'multiple-transmit-update')); ?>">Mass transmit update</a>
+</p>
+
+<form method="get" action="<?php echo $this->url(array('action' => 'run')); ?>">
+
+<div id="checker">
+	Check: <a class="check_all">all</a>
+	| <a class="uncheck_all">nothing</a>
+	| <a class="check_success">success</a>
+	| <a class="check_not_success">failure</a>
+</div>
+<p><input type="submit" name="run" value="test all checked" /></p>
+
+<table>
+	<tr>
+		<th> --- </th>
+		<th><a href="?order=url">Url</a></th>
+		<th><a href="?order=path">Path</a></th>
+		<th><a href="?order=status">Status</a></th>
+		<th><a href="?order=version">Type</a></th>
+		<th><a href="?order=transmit_id">Transmit</a></th>
+		<th> --- </th>
+	</tr>
+<?php
+foreach ($this->shell as $shell) :
+	$class = '';
+	if ($shell['success']) {
+		$class .= ' success';
+	} else {
+		$class .= ' failure';
+	}
+?>
+	<tr class="<?php echo $class; ?>">
+		<td><input type="checkbox" name="id[]" value="<?php echo $shell['id']; ?>" /></td>
+		<td><?php echo $shell['url']; ?></td>
+		<td><?php echo $shell['path']; ?></td>
+		<td title='<?php echo $shell['debug']; ?>'><?php echo $shell['status']['name']; ?></td>
+		<td><?php if (isset($shell['type']['key'])) echo $shell['type']['key']; ?></td>
+		<td><?php if (isset($shell['transmit']['key'])) echo $shell['transmit']['key']; ?></td>
+		<td>
+			<a href="<?php echo $this->url(array('action' => 'item', 'id' => $shell['id'])); ?>">edit</a>
+			| <a class='delete' href="<?php echo $this->url(array('action' => 'delete', 'id' => $shell['id'])); ?>">delete</a>
+			| <a href="<?php echo $this->url(array('action' => 'run', 'id' => $shell['id'])); ?>">run</a>
+		</td>
+	</tr>
+<?php endforeach; ?>
+</table>
+
+<div id="checker">
+	Check: <a class="check_all">all</a>
+	| <a class="uncheck_all">nothing</a>
+	| <a class="check_success">success</a>
+	| <a class="check_not_success">failure</a>
+</div>
+
+<p><input type="submit" name="run" value="test all checked" /></p>
+
+</form>

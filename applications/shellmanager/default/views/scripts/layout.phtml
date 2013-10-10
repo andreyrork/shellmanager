@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" lang="ru">
+	<head>
+	    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	    <meta http-equip="pragma" content="no-cache"/>
+	    <title><?php
+	    $title = !empty($this->document['title']) ? $this->document['title'] : 'Shell manager';
+	    echo $title;
+	    ?></title>
+		<?php
+			// process loading javascript files
+			foreach ($this->document['js'] as $js) {
+				echo "<script type='text/javascript' src='{$this->baseUrl}/script/$js'></script>\n";
+			}
+			// process loading css files
+			foreach ($this->document['css'] as $css) {
+				echo "<link rel='stylesheet' type='text/css' media='all' href='{$this->baseUrl}/style/$css' />\n";
+			}
+	    ?>
+	</head>
+	<body style="margin:0px;padding:0px;">
+
+		<div class="left">
+	 	    <div class="panel">
+		    	<ul>
+		    	   <li><a href="<?php echo $this->url(array('controller' => 'mysql', 'action' => 'list', 'table' => 'tag')); ?>">Tag</a></li>
+		    	   <li><a href="<?php echo $this->url(array('controller' => 'mysql', 'action' => 'item', 'table' => 'tag', 'id' => 0)); ?>">Add tag</a></li>
+		    	</ul>
+		    	<ul>
+		    	   <li><a href="<?php echo $this->url(array('controller' => 'transmit', 'action' => 'index')); ?>">Transmit</a></li>
+		    	   <li><a href="<?php echo $this->url(array('controller' => 'transmit', 'action' => 'item', 'id' => 0)); ?>">Add transmit</a></li>
+		    	</ul>
+		    	<ul>
+		    	   <li><a href="<?php echo $this->url(array('controller' => 'shell', 'action' => 'index')); ?>">Shell</a></li>
+		    	   <li><a href="<?php echo $this->url(array('controller' => 'shell', 'action' => 'item', 'id' => 0)); ?>">Add Shell</a></li>
+		    	</ul>
+		    	<ul>
+
+		    	   <li><a href="<?php echo $this->url(array('controller' => 'task', 'action' => 'index')); ?>">Task</a></li>
+		    	   <li><a href="<?php echo $this->url(array('controller' => 'task', 'action' => 'item', 'id' => 0)); ?>">Add Task</a></li>
+		    	</ul>
+		    </div>
+
+		    <p class="slide"><a href="#" class="btn-slide" style='background: url(<?php echo $this->baseUrl; ?>/images/btn-slide.gif) no-repeat left center;'>Меню</a></p>
+		</div>
+
+		<?php echo $this->render('menu.phtml'); ?>
+
+		<div id="content">
+			<h2><?php echo $title; ?></h2>
+			<?php
+				echo $this->layout()->content;
+			?>
+		</div>
+	</body>
+	</html>

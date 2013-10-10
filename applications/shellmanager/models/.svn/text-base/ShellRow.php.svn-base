@@ -1,0 +1,49 @@
+<?php
+
+class ShellRow extends Row
+{
+	/**
+	 * Return transmit text related by current shell row
+	 *
+	 * @return string
+	 */
+	public function getTransmit()
+	{
+       $transmit = Transmit::getInstance();
+       $transmitrow = $transmit->find($this->transmit_id)->current();
+       return $transmitrow->text;
+	}
+
+	/**
+	 * Return boolean mean shell status valid or not
+	 * @return boolean
+	 */
+	public function isSuccess()
+	{
+		if ($this->status == 200 && $this->version !== null) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Presave checking url for valid.
+	 *
+     * Saves the properties to the database.
+     *
+     * This performs an intelligent insert/update, and reloads the
+     * properties with fresh data from the table on success.
+     *
+     * @return mixed The primary key value(s), as an associative array if the
+     *     key is compound, or a scalar if the key is single-column.
+     */
+	public function save()
+	{
+		if (!$uri = Zend_Uri::check($this->url)) {
+			throw new Exception('Shell url is not valid: ' . $this->url);
+		}
+
+		parent::save();
+	}
+}

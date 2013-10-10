@@ -1,0 +1,226 @@
+<?php
+
+class TaskController extends ActionController
+{
+    public function indexAction()
+    {
+		$this->view->document['title'] = 'Index of tasks';
+		$this->view->document['js'][] = 'check.js';
+		
+		// Create custom select query for tasks
+		$task = Task::getInstance();
+		$select = $task->select();
+
+		// Apply custom ordering by Request
+		if ($column = $this->_getParam('order')) {
+			$select->order($column);
+		}
+
+		// By default ordering by modified date
+		$select->order('modified desc');
+
+		// Query
+        $rowset = $task->fetchAll($select);
+
+        // Process rowset
+        $tasks = array();
+        foreach ($rowset as $row) {
+            $array = array();
+            $array = $row->toArray();
+
+            // Get dependent shell information
+            $shell = $row->findDependentRowset('Shell')->current();
+            $array['shell'] = $shell->toArray();
+
+            // Get dependent action information
+            $shell = $row->findDependentRowset('Action')->current();
+            $array['action'] = $shell->toArray();
+
+            // Get dependent response code inforamtion and correspondence task status
+            $array['status'] = (int)$row->isSuccess();
+            $processed = 0;
+            if ($row->response_code_id) {
+            	$processed = 1;
+            	$response = $row->findDependentRowset('ResponseCode')->current();
+				$array['response'] = $response->toArray();
+            }
+
+            $array['processed'] = $processed;
+
+            $tasks[] = $array;
+		}
+
+		// Complex task information going to view
+		$this->view->task = $tasks;
+    }
+
+    /**
+     * Forward checked task ids to delete or run action
+     * @return forward delete || run
+     */
+    public function processAction()
+    {
+    	if ($this->_getParam('delete')) {
+    		$this->_forward('delete');
+    	}
+
+    	if ($this->_getParam('run')) {
+    		$this->_forward('run');
+    	}
+    }
+
+    /**
+     * Creating tasks by multiple shells with multiple actions
+     * @return redirect indexAction
+     */
+    public function _multipleAdd()
+    {
+    	// Getting shell rowset by ids from request
+		$shell = $this->_getParam('shell_id');
+		$shellRowset = Shell::getInstance()->find($shell);
+
+		// Getting action rowset by ids from request
+		$action = $this->_getParam('action_id');
+		$actionRowset = Action::getInstance()->find($action);
+
+		// For each shell adding each action task
+		foreach ($shellRowset as $shellRow) {
+			foreach($actionRowset as $actionRow) {
+				$task = Task::getInstance()->createRow();
+
+				$task->shell_id = $shellRow->id;
+				$task->action_id = $actionRow->id;
+				$task->save();
+			}
+		}
+
+		$this->_goto(array('controller' => 'task', 'action' => 'index'), null, true);
+    }
+
+    public function itemAction()
+    {
+    	$this->view->document['title'] = 'Task edit';
+
+    	$task = $this->_getTask();
+		$this->view->task = $task->toArray();
+
+		if ($this->_request->isPost()) {
+			// For creating specified function
+			if ($task->id === null) {
+				$this->_multipleAdd();
+				return;
+			}
+
+			$shell = $this->_getParam('shell_id');
+			$action = $this->_getParam('action_id');
+
+			$task->shell_id = $shell;
+			$task->action_id = $action;
+			$task->save();
+
+			// Redirect for not repost form
+			$this->_goto(array('id' => $task->id));
+		}
+
+		$this->_urlListForming();
+		$this->_actionListForming();
+    }
+
+	public function deleteAction()
+	{
+		$id = $this->_getParam('id');
+		$rowset = Task::getInstance()->find($id);
+		foreach ($rowset as $row) {
+			$row->delete();
+		}
+
+		$this->_goto(array('controller' => 'task', 'action' => 'index'), null, true);
+	}
+
+	/**
+	 * Getting Task object by id in Request
+	 *
+	 * @return Task|null
+	 */
+	private function _getTask()
+	{
+		// Get id from Request
+		$id = $this->_getParam('id');
+
+		// If id not specified return
+		if ($id == 0) {
+			return Task::getInstance()->createRow();
+		}
+
+		// For successfully integer we try to return existing shell row
+		$task = Task::getInstance()->find($id)->current();
+
+		// If row not specified we cant further process
+		if (!$task instanceof TaskRow) {
+			$this->_goto(array('action' => 'index'));
+		}
+
+		return $task;
+	}
+
+	/**
+	 * Set to view full shell url list
+	 * @return void
+	 */
+	private function _urlListForming()
+	{
+		$rowset = Shell::getInstance()->fetchAll();
+
+		$array = array();
+		foreach ($rowset as $row) {
+			$array[$row->id] = $row->url;
+		}
+
+		$this->view->shell = $array;
+	}
+
+	/**
+	 * Set to view full action key list
+	 * @return void
+	 */
+	private function _actionListForming()
+	{
+		$rowset = Action::getInstance()->fetchAll();
+		$array = array();
+
+		foreach ($rowset as $row) {
+			$array[$row->id] = $row->key;
+		}
+
+		$this->view->action = $array;
+	}
+
+	/**
+	 * Processing task list
+	 * @return void
+	 */
+	public function runAction()
+	{
+		$this->getFrontController()->setParam('noViewRenderer', true);
+
+		// Getting task id from Request. Must be integer or array or empty.
+		$id = $this->_getParam('id');
+
+		// If id is numeric adding it to simple array
+		if (is_numeric($id)) {
+			$id = array($id);
+		}
+
+		// Processing all task from the array
+		if (is_array($id)) {
+			// Retrieve rowset by ids
+			$tasks = Task::getInstance()->find($id);
+			foreach ($tasks as $task) {
+				// Run all of selected tasks to process
+				TaskManager::getInstance()->process($task);
+			}
+		}
+
+		//$this->_goto(array('controller' => 'task', 'action' => 'index'), null, true);
+	}
+}

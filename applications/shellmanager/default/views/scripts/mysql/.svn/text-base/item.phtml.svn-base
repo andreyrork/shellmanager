@@ -1,0 +1,14 @@
+<?php
+$url = $this->url(array('id' => $this->row['id']));
+echo $this->form('update', array('action' => $url, 'method' => 'post'));
+?>
+
+<?php foreach ($this->columns as $column) : ?>
+	<?php if ($column == 'id') continue; ?>
+	<p><?php echo $this->formLabel($column, $column); ?></p>
+	<p><?php echo $this->formText($column, $this->row[$column]); ?></p>
+<?php endforeach; ?>
+
+<p><input type="submit" value="Save" /></p>
+
+</form>

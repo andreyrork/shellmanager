@@ -1,0 +1,20 @@
+<?php
+
+class TaskRow extends Row
+{
+	/**
+	 * Return boolean mean task response code success process or not
+	 * @return boolean
+	 */
+	public function isSuccess()
+	{
+		if ($this->response_code_id) {
+			$response = $this->findDependentRowset('ResponseCode')->current();
+			if ($response->key == 200) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+}

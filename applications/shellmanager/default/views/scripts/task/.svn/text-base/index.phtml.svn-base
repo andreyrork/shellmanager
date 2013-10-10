@@ -1,0 +1,80 @@
+
+<p>
+	<a href="<?php echo $this->url(array('action' => 'item', 'id' => 0)); ?>">Creating Task</a>
+</p>
+
+<form method="get" action="<?php echo $this->url(array('action' => 'process')); ?>">
+
+<div id="checker">
+	Check: <a class="check_all">all</a>
+	| <a class="uncheck_all">nothing</a>
+	| <a class="check_processed">processed</a>
+	| <a class="check_not_processed">unprocessed</a>
+	| <a class="check_success">success</a>
+	| <a class="check_not_success">failure</a>
+</div>
+
+<input type="submit" name="run" value="run" />
+<input type="submit" name="delete" value="delete" />
+<br>
+<br>
+<table>
+	<tr>
+		<th> --- </th>
+		<th><a href="?order=shell_id">Url</a></th>
+		<th><a href="?order=action_id">Action</a></th>
+		<th><a href="?order=response_code_id">Response Text</a></th>
+		<th><a href="?order=response_code_id">Response Body</a></th>
+		<th> --- </th>
+	</tr>
+<?php
+foreach ($this->task as $task) :
+	$class = '';
+
+	if ($task['processed']) {
+		$class .= ' processed';
+
+		if ($task['status']) {
+			$class .= ' success';
+		} else {
+			$class .= ' failure';
+		}
+	} else {
+		$class .= ' not_processed';
+	}
+
+	if (isset($task['response']['name'])) {
+		$response = $task['response']['name'];
+	} else {
+		$response = null;
+	}
+?>
+	<tr class="<?php echo $class; ?>">
+		<td><input type="checkbox" name="id[]" value="<?php echo $task['id']; ?>" /></td>
+		<td><?php echo $task['shell']['url']; ?></td>
+		<td><?php echo $task['action']['key']; ?></td>
+		<td><?php echo $response; ?></td>
+		<td><?php echo $this->escape($task['response_body']); ?></td>
+		<td>
+			<a href="<?php echo $this->url(array('action' => 'item', 'id' => $task['id'])); ?>">edit</a>
+			| <a href="<?php echo $this->url(array('action' => 'delete', 'id' => $task['id'])); ?>">delete</a>
+			| <a href="<?php echo $this->url(array('action' => 'run', 'id' => $task['id'])); ?>">run</a>
+		</td>
+	</tr>
+<?php endforeach; ?>
+</table>
+
+<div id="checker">
+	Check: <a class="check_all">all</a>
+	| <a class="uncheck_all">nothing</a>
+	| <a class="check_processed">processed</a>
+	| <a class="check_not_processed">unprocessed</a>
+	| <a class="check_success">success</a>
+	| <a class="check_not_success">failure</a>
+</div>
+
+<input type="submit" name="run" value="run" />
+<input type="submit" name="delete" value="delete" />
+
+</form>
+

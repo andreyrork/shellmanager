@@ -1,0 +1,140 @@
+
+.menu {
+	margin: 80px 0 0;
+	padding: 0;
+	list-style: none;
+}
+.menu li {
+	padding: 0;
+	margin: 0 2px;
+	float: left;
+	position: relative;
+	text-align: center;
+}
+.menu a {
+	padding-top: 30px;
+	padding-bottom: 30px;
+	display: block;
+	color: #000000;
+	width: 120px;
+	text-decoration: none;
+	font-weight: bold;
+	background: url(/images/button.gif) no-repeat center center;
+}
+.menu li em {
+	font-weight: normal;
+	background: url(/images/hover.png) no-repeat;
+	width: 180px;
+	height: 45px;
+	position: absolute;
+	top: -85px;
+	left: -30px;
+	text-align: center;
+	padding: 20px 12px 10px;
+	font-style: normal;
+	z-index: 2;
+	display: none;
+}
+
+.thumbs {
+	padding-top: 10px;
+	
+	
+}
+
+body {
+	margin: 0 auto;
+	padding: 0;
+	/*width: 520px;*/
+	font: 75%/120% Arial, Helvetica, sans-serif;
+}
+
+.body {
+    padding:0;
+	border: 1px #ccc solid;
+	height:2000px;
+	/*position: absolute;*/
+}
+
+a:focus {
+	outline: none;
+}
+.left{
+    float:left;  
+	position: absolute;
+}
+
+.panel{
+	width: 0px;   
+	background: #EFEEEE;
+	height: 265px;
+	display: none;
+}
+.left .slide {
+    border-left:solid 2px #aaa; 
+	margin: 0;
+	padding: 0;
+	background: url(/images/btn-slide.gif) no-repeat left center;
+	height: 265px;
+	width:38px;
+	float:left;
+}
+.left .panel{
+	float:left;
+}
+
+
+.left .btn-slide {
+	background: url(/images/white-arrow-hor.gif) no-repeat -45px 80px;
+	text-indent: -9000%;
+	display: block;
+	height: 265px;
+	width:38px;
+}
+
+
+.left .active {
+	background-position: 10px 80px;
+}
+
+.panel ul {
+    list-style:none;
+    border-bottom:2px dotted #aaaaaa;
+    padding:10px;
+    margin:0;
+}
+
+.panel ul a{
+    font-weight:bold;
+    color: #333;
+    white-space: nowrap;
+}
+
+.rect {
+	position: absolute;
+	width: 50px;	
+	height:50px;
+	background-color:black;
+	top: 10px;
+	left:10px;
+}
+
+.selected {
+	position: absolute;
+
+
+}
+
+.drawing {
+	width: 200px;
+	height: 200px;
+	background-color: gray;
+
+}
+
+.pixel {
+	color: white;
+	width: 1px;
+	height: 1px;
+	position: absolute;
+}

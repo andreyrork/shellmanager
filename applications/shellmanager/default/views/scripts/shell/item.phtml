@@ -1,0 +1,33 @@
+<?php
+$shell = $this->url(array('id' => $this->shell['id']));
+echo $this->form('update', array('action' => $shell, 'method' => 'post'));
+?>
+
+<div class='error'>
+<?php
+	if ($this->error) {
+		echo $this->error['type'] . ' : ' . $this->error['message'];
+	}
+?></div>
+
+<div>
+<?php if (isset($this->shell['status']['name'])) echo 'Status: ' . $this->shell['status']['name'] . '<br />'; ?>
+<?php if (isset($this->shell['type']['key'])) echo 'Type: ' . $this->shell['type']['key'] . '<br />'; ?>
+<?php if (isset($this->shell['debug'])) echo 'Debug: ' . $this->shell['debug'] . '<br />'; ?>
+</div>
+<br />
+
+<label for="url">Http url of shell:</label>
+<p><?php echo $this->formText('url', $this->shell['url']); ?></p>
+
+<label for="path">Path for the processing file on shell:</label>
+<p><?php echo $this->formText('path', $this->shell['path']); ?></p>
+
+<label for="transmit_id">Transmit for file modified or check:</label>
+<p><?php echo $this->formSelect('transmit_id', $this->shell['transmit_id'], null, $this->transmit); ?></p>
+
+<label for="comment">Just Comment:</label>
+<p><?php echo $this->formText('comment', $this->shell['comment']); ?></p>
+
+<p><input type="submit" value="Save" /></p>
+</form>

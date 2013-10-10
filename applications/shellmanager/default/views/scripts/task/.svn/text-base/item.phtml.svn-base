@@ -1,0 +1,35 @@
+<?php
+// For editing single task do don show multiple select box
+if (!$this->task['id']) {
+	$attributes = array('multiple' => 'multiple');
+} else {
+	$attributes = null;
+}
+
+$url = $this->url(array());
+echo $this->form('update', array('action' => $url, 'method' => 'post'));
+?>
+
+<p><?php echo $this->formLabel('shell_id', 'List of shells: '); ?></p>
+<p><?php
+	echo $this->formSelect(
+			'shell_id',
+			$this->task['shell_id'],
+			$attributes,
+			$this->shell
+		);
+	?></p>
+
+<p><?php echo $this->formLabel('action_id', 'List of actions: '); ?></p>
+<p><?php
+	echo $this->formSelect(
+			'action_id',
+			$this->task['action_id'],
+			$attributes,
+			$this->action
+		);
+?></p>
+
+<p><input type="submit" value="Save" /></p>
+
+</form>

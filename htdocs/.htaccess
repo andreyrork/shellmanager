@@ -1,0 +1,18 @@
+<IfModule !mod_rewrite.c>
+DirectoryIndex error_no_mod_rewrite.html
+</IfModule>
+
+php_flag magic_quotes_gpc off
+
+
+DirectoryIndex start.php
+
+RewriteEngine On
+
+RewriteCond %{SCRIPT_FILENAME} !-f
+RewriteRule ^(style|script|images)/.+\.(.+)$ style.php?path=$0&ext=$2 [NS,L]
+
+RewriteCond %{SCRIPT_FILENAME} !-f
+RewriteCond %{SCRIPT_FILENAME} !-d
+RewriteRule ^(.*)$ start.php [NS,L]
+

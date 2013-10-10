@@ -1,0 +1,52 @@
+8
+
+dir
+24
+https://annexy.googlecode.com/svn/trunk/annexy/applications/shellmanager/views/scripts/task
+https://annexy.googlecode.com/svn
+
+
+
+2008-12-30T17:30:55.285835Z
+17
+s.andrey.d
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+86881b8c-c95a-11dd-a2ab-b939405fd53f
+
+index.phtml
+file
+
+
+
+
+2008-12-30T17:31:49.630000Z
+bdcaa67e836eff4e6e6569bca6fdf76a
+2008-12-30T17:30:55.285835Z
+17
+s.andrey.d
+
+item.phtml
+file
+
+
+
+
+2008-12-30T14:20:47.802000Z
+30f77d2f8045314398ecc951f12e3640
+2008-12-15T00:46:34.509517Z
+5
+s.andrey.d
+

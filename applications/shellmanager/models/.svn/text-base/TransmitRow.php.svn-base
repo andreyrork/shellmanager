@@ -1,0 +1,50 @@
+<?php
+
+class TransmitRow extends Row
+{
+	private $_tags = array(
+		array('open' => '<p>', 'close' => '</p>'),
+		array('open' => '<div>', 'close' => '</div>'),
+		array('open' => '<em>', 'close' => '</em>'),
+	);
+	const TAG_FREQUENCY = 100;
+
+	/**
+	 * Randomize transmit text with some tags and switch blocks
+	 * @return string Modified transmit text
+	 */
+	public function randomize()
+	{
+		$text = $this->text;
+		$text = strip_tags($text, '<a>');
+		$text = explode('</a>',$text);
+		shuffle($text);
+		$resultContent = '';
+		foreach ($text as $link) {
+			if (rand(1, self::TAG_FREQUENCY) == self::TAG_FREQUENCY) {
+				$tag = $this->_getTag('random');
+			} else {
+				$tag = $this->_getTag('empty');
+			}
+			$resultContent .= sprintf("%s%s</a>%s<br />\n", $tag['open'], $link, $tag['close']);
+		}
+		return $resultContent;
+	}
+
+	/**
+	 * Return tag by string option.
+	 *
+	 * @param string $option random|empty
+	 * @return array array('open'=>'','close'=>'')
+	 */
+	private function _getTag($option)
+	{
+		if ($option == 'random') {
+			$tag = rand(0, count($this->_tags)-1);
+			return $this->_tags[$tag];
+		}
+
+		return array('open' => '', 'close' => '');
+	}
+
+}

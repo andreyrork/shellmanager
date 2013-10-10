@@ -1,0 +1,11 @@
+<ul>
+<?php foreach ($this->table as $table) : ?>
+	<li>
+			<a href="<?php
+						echo $this->url(array('action' => 'list', 'table' => $table));
+					?>"><?php
+						echo $table;
+					?></a>
+	</li>
+<?php endforeach; ?>
+</ul>

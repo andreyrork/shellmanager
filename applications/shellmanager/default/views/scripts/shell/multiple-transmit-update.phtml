@@ -1,0 +1,11 @@
+
+<form action="" method="post">
+
+<label for="shell">Multiple shell:</label>
+<p><?php echo $this->formSelect('shell[]', null, null, $this->shell); ?></p>
+
+<label for="transmit_id">Transmit for file modified or check:</label>
+<p><?php echo $this->formSelect('transmit_id', null, null, $this->transmit); ?></p>
+
+<p><input type="submit" value="Save" /></p>
+</form>

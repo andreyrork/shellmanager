@@ -1,0 +1,88 @@
+
+<div id="basePath" class="<?php echo $this->baseUrl; ?>"></div>
+<p>
+	<a href="<?php echo $this->url(array('action' => 'item', 'id' => 0)); ?>">Creating Task</a>
+</p>
+
+<form method="get" action="<?php echo $this->url(array('action' => 'process')); ?>">
+
+<div id="checker">
+	Check: <a class="check_all">all</a>
+	| <a class="uncheck_all">nothing</a>
+	| <a class="check_processed">processed</a>
+	| <a class="check_not_processed">unprocessed</a>
+	| <a class="check_success">success</a>
+	| <a class="check_not_success">failure</a>
+</div>
+
+<input class='runSubmit' type="submit" name="run" value="run" />
+<input type="submit" name="delete" value="delete" />
+
+<ul class='error'>
+</ul>
+
+<br>
+<br>
+<table>
+	<tr>
+		<th> --- </th>
+		<th><a href="?order=shell_id">Url</a></th>
+		<th>
+			<a href="?order=action_id">Action</a>
+			<select id='actions'>
+			<option value='all' selected='selected'></option>
+			<?php
+				foreach ($this->action as $action) {
+					echo "<option value='$action'>$action</option>";
+				}
+			?>
+			</select>
+		</th>
+		<th><a href="?order=status">Status</a></th>
+		<th> --- </th>
+	</tr>
+<?php
+
+foreach ($this->task as $task) :
+	$class = '';
+
+	if ($task['status'] !== null) {
+		$class .= ' processed';
+
+		if ($task['status'] == 1) {
+			$class .= ' success';
+		} else if ($task['status'] == 0) {
+			$class .= ' failure';
+		}
+	} else {
+		$class .= ' not_processed';
+	}
+?>
+	<tr id="<?php echo $task['id']; ?>" class="<?php echo $class . ' all ' . $task['action']['key']; ?>">
+		<td><input type="checkbox" name="id[]" value="<?php echo $task['id']; ?>" /></td>
+		<td><?php echo $task['shell']['url']; ?></td>
+		<td><?php echo $task['action']['key']; ?></td>
+		<td><?php echo $task['status']; ?></td>
+		<td>
+			<a href="<?php echo $this->url(array('action' => 'item', 'id' => $task['id'])); ?>">edit</a>
+			| <a href="<?php echo $this->url(array('action' => 'delete', 'id' => $task['id'])); ?>">delete</a>
+			| <a id="<?php echo $task['id']; ?>" class='run' href="<?php echo $this->url(array('action' => 'run', 'id' => $task['id'])); ?>">run</a>
+		</td>
+	</tr>
+<?php endforeach; ?>
+</table>
+
+<div id="checker">
+	Check: <a class="check_all">all</a>
+	| <a class="uncheck_all">nothing</a>
+	| <a class="check_processed">processed</a>
+	| <a class="check_not_processed">unprocessed</a>
+	| <a class="check_success">success</a>
+	| <a class="check_not_success">failure</a>
+</div>
+
+<input class='runSubmit' type="submit" name="run" value="run" />
+<input type="submit" name="delete" value="delete" />
+
+</form>
+

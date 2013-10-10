@@ -1,0 +1,167 @@
+#header {
+	color:#fff;
+	height: 75px;
+	}
+
+#title {
+	padding-left: 5px;	
+}
+
+.menu {
+	padding-top: 70px;
+	list-style: none;
+	background-color: #333333;
+}
+
+.menu li {
+	padding: 0;
+
+	float: left;
+	position: relative;
+	text-align: center;
+}
+
+.menu a {
+	padding: 10px 0px;
+	display: block;
+	color: #000000;
+	width: 80px;
+	height: 20px;
+	text-decoration: none;
+	font-weight: bold;
+	color: white;
+	background: url(/images/button2.gif) no-repeat center center;
+}
+
+.menu li em {
+	font-weight: normal;
+	background: url(/images/hover.png) no-repeat;
+	width: 180px;
+	height: 45px;
+	position: absolute;
+	top: -85px;
+	left: -60px;
+	text-align: center;
+	padding: 20px 12px 10px;
+	font-style: normal;
+	z-index: 2;
+	display: none;
+	color: black;
+}
+
+
+body,
+html {
+	margin:0;
+	padding:0;
+	background:#333333;
+	color:#000;
+	}
+body {
+-x-system-font:none;
+font-family:Arial;
+font-size: 80%;
+font-size-adjust:none;
+font-stretch:normal;
+font-style:normal;
+font-variant:normal;
+font-weight:normal;
+
+}
+#wrap {
+	background:#333333;
+	padding-left: 1%;
+	width: 600px;
+	}
+#wrap h1 {
+	color:#fff;
+	text-align: center;
+
+}
+
+
+
+#main {
+	background:#fff;
+	float:left;
+	width:600px;
+	color: #000;
+	padding-left: 1%; 
+	padding-right: 5%;
+	}
+#main h1, #main h2, #main h3, #main p {
+	padding:0 10px;
+	text-align: center;
+    }
+
+
+
+#content {
+	background:#fff;
+	float:left;
+	color: #000;
+	padding-left: 5%; 
+	padding-right: 5%;
+	font: arial;
+	}
+#content h2 {
+	font-size: 24pt;
+	padding:0 15px;
+	text-align: center;
+	color: red;
+    }
+
+
+.news {
+
+width:240px;
+float:right;
+padding: 3px;
+border: dotted 1px white;
+margin-right: 1%;
+}
+.news h3 {
+-x-system-font:none;
+text-align: center;
+background:#E9E7E7 url(/images/arrow-square.gif) no-repeat scroll right -51px;
+border-color:#C4C4C4 #C4C4C4 -moz-use-text-color;
+border-style:solid solid none;
+border-width:1px 1px medium;
+cursor:pointer;
+font-family:Arial,Helvetica,sans-serif;
+font-size:120%;
+font-size-adjust:none;
+font-stretch:normal;
+font-style:normal;
+font-variant:normal;
+font-weight:bold;
+line-height:100%;
+margin:0;
+padding:7px 15px;
+}
+.news h3:hover {
+background-color:#E3E2E2;
+}
+.news h3.active {
+background-position:right 5px;
+}
+.news p {
+background:#F7F7F7 none repeat scroll 0 0;
+border-left:1px solid #C4C4C4;
+border-right:1px solid #C4C4C4;
+margin:0;
+padding:10px 15px 20px;
+}
+
+.calendar {
+	border : 1px solid black;	
+	font: 10px sans-serif black;
+	
+}
+.monthselect {
+	width: 55px;
+}
+.calendarheader {
+	border-bottom: 1px solid black;
+
+}
